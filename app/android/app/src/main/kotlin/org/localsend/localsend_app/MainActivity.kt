@@ -136,10 +136,12 @@ class MainActivity : FlutterActivity() {
                         MediaScannerConnection.scanFile(
                             this,
                             arrayOf(path),
-                            null,
                             null
-                        )
-                        result.success(null)
+                        ) { _, _ ->
+                            runOnUiThread {
+                                result.success(null)
+                            }
+                        }
                     }
                 }
 
