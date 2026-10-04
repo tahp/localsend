@@ -24,6 +24,7 @@ import 'package:localsend_app/provider/selection/selected_receiving_files_provid
 import 'package:localsend_app/provider/selection/selected_sending_files_provider.dart';
 import 'package:localsend_app/provider/settings_provider.dart';
 import 'package:localsend_app/util/native/directories.dart';
+import 'package:localsend_app/util/native/channel/android_channel.dart';
 import 'package:localsend_app/util/native/platform_check.dart';
 import 'package:localsend_app/util/native/tray_helper.dart';
 import 'package:localsend_app/widget/dialogs/open_file_dialog.dart';
@@ -351,6 +352,8 @@ class ReceiveController {
           if (filePath != destinationPath) {
             filePath = await File(filePath).rename(destinationPath).then((file) => file.path);
           }
+
+          await scanMediaFileAndroid(filePath);
         } catch (e) {
           _logger.warning('Failed to move audio file to Music', e);
         }

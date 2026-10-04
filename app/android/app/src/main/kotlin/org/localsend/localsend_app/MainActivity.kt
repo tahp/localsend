@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.database.Cursor
+import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
@@ -125,6 +126,21 @@ class MainActivity : FlutterActivity() {
 
                 "getDownloadsDirectory" -> {
                     result.success(getDownloadsDirectory())
+                }
+
+                "scanMediaFile" -> {
+                    val path = call.argument<String>("path")
+                    if (path == null) {
+                        result.error("INVALID_PATH", "Path is required", null)
+                    } else {
+                        MediaScannerConnection.scanFile(
+                            this,
+                            arrayOf(path),
+                            null,
+                            null
+                        )
+                        result.success(null)
+                    }
                 }
 
                 "requestLocalNetworkPermission" -> {

@@ -115,3 +115,13 @@ class FileInfo with FileInfoMappable {
     required this.lastModified,
   });
 }
+
+Future<void> scanMediaFileAndroid(String path) async {
+  try {
+    await _methodChannel.invokeMethod('scanMediaFile', {
+      'path': path,
+    });
+  } catch (e) {
+    _logger.warning('Could not scan media file: $path', e);
+  }
+}
