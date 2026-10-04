@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io' show File;
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -36,6 +37,7 @@ import 'package:localsend_isolates/util/rust.dart';
 import 'package:localsend_isolates/util/transfer_notification.dart';
 import 'package:logging/logging.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:path/path.dart' as p;
 import 'package:refena_flutter/refena_flutter.dart';
 import 'package:routerino/routerino.dart';
 import 'package:uuid/uuid.dart';
@@ -334,10 +336,26 @@ class ReceiveController {
     }
 
     final fileType = receivingFile.file.fileType;
-    final filePath = event.path;
+    var filePath = event.path;
     final error = event.error;
 
     if (error == null) {
+      if (fileType == FileType.audio && filePath != null) {
+        try {
+          final musicDirectory = await getMusicDirectory();
+          final destinationPath = p.join(
+            musicDirectory,
+            p.basename(filePath),
+          );
+
+          if (filePath != destinationPath) {
+            filePath = await File(filePath).rename(destinationPath).then((file) => file.path);
+          }
+        } catch (e) {
+          _logger.warning('Failed to move audio file to Music', e);
+        }
+      }
+
       server.ref.notifier(fileTransferProvider).setStatus(sessionId: event.sessionId, fileId: fileId, status: FileStatus.finished);
       server.setState(
         (oldState) => oldState?.copyWith(

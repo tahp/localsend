@@ -43,3 +43,14 @@ Future<String> getCacheDirectory() async {
   await dir.create(recursive: true);
   return dir.path;
 }
+
+Future<String> getMusicDirectory() async {
+  if (defaultTargetPlatform == TargetPlatform.android) {
+    final dir = Directory('/storage/emulated/0/Music');
+    await dir.create(recursive: true);
+    return dir.path;
+  }
+
+  final dir = await path.getApplicationDocumentsDirectory();
+  return dir.path;
+}
