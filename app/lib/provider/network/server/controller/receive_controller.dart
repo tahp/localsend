@@ -341,11 +341,14 @@ class ReceiveController {
     final error = event.error;
 
     if (error == null) {
-      if (fileType == FileType.audio && filePath != null) {
+      if ((fileType == FileType.audio || fileType == FileType.video) && filePath != null) {
         try {
-          final musicDirectory = await getMusicDirectory();
+          final mediaDirectory = fileType == FileType.audio
+              ? await getMusicDirectory()
+              : await getMoviesDirectory();
+
           final destinationPath = p.join(
-            musicDirectory,
+            mediaDirectory,
             p.basename(filePath),
           );
 
@@ -355,7 +358,7 @@ class ReceiveController {
 
           await scanMediaFileAndroid(filePath);
         } catch (e) {
-          _logger.warning('Failed to move audio file to Music', e);
+          _logger.warning('Failed to move media file', e);
         }
       }
 

@@ -54,3 +54,14 @@ Future<String> getMusicDirectory() async {
   final dir = await path.getApplicationDocumentsDirectory();
   return dir.path;
 }
+
+Future<String> getMoviesDirectory() async {
+  if (defaultTargetPlatform == TargetPlatform.android) {
+    final dir = Directory('/storage/emulated/0/Movies');
+    await dir.create(recursive: true);
+    return dir.path;
+  }
+
+  final dir = await path.getApplicationDocumentsDirectory();
+  return dir.path;
+}
